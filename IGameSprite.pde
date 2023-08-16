@@ -1,6 +1,5 @@
 public interface IGameSprite {
 
-
   public void setPos(float x, float y);
   public void applyForce(PVector force);
 
@@ -22,4 +21,7 @@ public interface IGameSprite {
 
   public boolean isFrozen();
   public void setFrozen(boolean frozen);
+
+  public void destroy();
+  public boolean toDestroy();
 }

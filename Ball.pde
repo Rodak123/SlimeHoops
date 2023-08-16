@@ -5,6 +5,7 @@ public class Ball extends GameSprite {
 
   private boolean launched;
   private int wallBounces;
+  private int orbHits;
 
   public Ball(SpriteManager spriteManager, float x, float y, SplashManager splashManager, SoundManager soundManager) {
     super(spriteManager.ball, x, y);
@@ -43,19 +44,37 @@ public class Ball extends GameSprite {
     wallBounces++;
     if (vel.mag() > 50) {
       splashManager.splash(pos, vel);
-      soundManager.bounce.play();
+      if(vel.mag() > 25){
+        soundManager.bounce.play();
+      }
     }
+  }
+
+  public final void hitOrb(Orb orb) {
+    if (!launched) return;
+    if(vel.mag() < 500) return;
+    orbHits++;
+    orb.destroy();
+    splashManager.splash(pos, vel);
+    soundManager.splash.play();
   }
 
   public final int getWallBounces() {
     return wallBounces;
   }
 
+  public final int getOrbHits() {
+    return orbHits;
+  }
+
   public final void launch(PVector spring) {
     if (launched) return;
     launched = true;
     PVector force = new PVector(spring.x, spring.y);
-    force.setMag(map(spring.z, 0, (screenWidth+screenHeight)/2, 0, 2000));
+    float maxMag = 1000;
+    float mag = constrain(map(spring.z, 0, (screenWidth+screenHeight)/2, 0, maxMag), 0, maxMag);
+    println(mag);
+    force.setMag(mag);
     applyForce(force);
   }
 

@@ -5,6 +5,7 @@ private SoundManager soundManager;
 
 private ScoreManager scoreManager;
 private SplashManager splashManager;
+private OrbManager orbManager;
 
 private Hoop hoop;
 private Ball ball;
@@ -26,20 +27,23 @@ public final void settings() {
 }
 
 public final void setup() {
+  surface.setIcon(loadImage("icon.png"));
+
   gravity = new PVector(0, 40);
-  
+
   soundManager = new SoundManager(this, "sfx/");
-  
+
   FontManager.setup(this, createFont("Early_GameBoy.ttf", 16));
 
   spriteManager = new SpriteManager("");
   scoreManager = new ScoreManager();
   splashManager = new SplashManager();
+  orbManager = new OrbManager(spriteManager);
 
   dragger = new SpringDragger();
 
   spawnRound();
-  
+
   soundManager.theme.amp(0.5);
   soundManager.theme.loop();
 }
@@ -47,6 +51,7 @@ public final void setup() {
 private final void spawnRound() {
   spawnHoop();
   spawnBall();
+  orbManager.spawnOrbs();
 }
 
 private final void spawnHoop() {
@@ -67,44 +72,47 @@ private final void spawnBall() {
 public final void draw() {
   Time.update(this);
   //println(Time.deltaTime);
-  
+
   background(ColorPalette.Background);
   scale(scale, scale);
-  
-  switch(gameState){
-    case Title:
-      imageMode(CORNER);
-      image(spriteManager.title, 0, 0);
+
+  switch(gameState) {
+  case Title:
+    imageMode(CORNER);
+    image(spriteManager.title, 0, 0);
     break;
-    case Game:    
-      // Update
-      hoop.update();
-      ball.update();
-      splashManager.update();
-    
-      hoop.catchBall(ball);
-    
-      // Show
-      PVector hoopPos = hoop.getPos();
-      scoreManager.show(hoopPos.x, hoopPos.y-hoop.getH()/2);
-    
-      hoop.show();
-      ball.show();
-      hoop.showFront();
-    
-      dragger.show();
-    
-      imageMode(CORNER);
-      image(spriteManager.overlay, 0, 0);
-      splashManager.show();
+  case Game:
+    // Update
+    hoop.update();
+    ball.update();
+    splashManager.update();
+    orbManager.update(ball);
+
+    hoop.catchBall(ball);
+
+    // Show
+    PVector hoopPos = hoop.getPos();
+    scoreManager.show(hoopPos.x, hoopPos.y-hoop.getH()/2);
+
+    hoop.show();
+    ball.show();
+    hoop.showFront();
+
+    orbManager.show();
+
+    dragger.show();
+
+    imageMode(CORNER);
+    image(spriteManager.overlay, 0, 0);
+    splashManager.show();
     break;
-    case EndScreen:
-      imageMode(CORNER);
-      image(spriteManager.endScreen, 0, 0);
-      scoreManager.showLastScore(100, 119);
-      scoreManager.showHighScore(100, 137);
+  case EndScreen:
+    imageMode(CORNER);
+    image(spriteManager.endScreen, 0, 0);
+    scoreManager.showLastScore(100, 119);
+    scoreManager.showHighScore(100, 137);
     break;
-    default:
+  default:
   }
 }
 
@@ -125,58 +133,59 @@ private final void nextRound() {
 
 public final void score() {
   int bounces = ball.getWallBounces();
+  int orbHits = ball.getOrbHits();
   ball.setFrozen(true);
-  scoreManager.addScore(bounces);
+  scoreManager.addScore(bounces, orbHits);
   scored = true;
   soundManager.success.play();
 }
 
 public final void mousePressed() {
-  switch(gameState){
-    case Title:
-      gameState = GameState.Game;
-      soundManager.click.play();
+  switch(gameState) {
+  case Title:
+    gameState = GameState.Game;
+    soundManager.click.play();
     break;
-    case Game:
-      if (ball.canGrab()) {
-        dragger.grab();
-      } else if (ball.stopped()) {
-        nextRound();
-      }
+  case Game:
+    if (ball.canGrab()) {
+      dragger.grab();
+    } else if (ball.stopped()) {
+      nextRound();
+    }
     break;
-    case EndScreen:
-      gameState = GameState.Game;
-      soundManager.click.play();
+  case EndScreen:
+    gameState = GameState.Game;
+    soundManager.click.play();
     break;
-    default:
-  }  
+  default:
+  }
 }
 
 public final void mouseDragged() {
-  switch(gameState){
-    case Title:
+  switch(gameState) {
+  case Title:
     break;
-    case Game:
-      dragger.drag();
+  case Game:
+    dragger.drag();
     break;
-    case EndScreen:
+  case EndScreen:
     break;
-    default:
+  default:
   }
 }
 
 public void mouseReleased() {
-  switch(gameState){
-    case Title:
+  switch(gameState) {
+  case Title:
     break;
-    case Game:
-      PVector spring = dragger.release();
-      if (spring != null) {
-        ball.launch(spring);
-      }
+  case Game:
+    PVector spring = dragger.release();
+    if (spring != null) {
+      ball.launch(spring);
+    }
     break;
-    case EndScreen:
+  case EndScreen:
     break;
-    default:
-  } 
+  default:
+  }
 }

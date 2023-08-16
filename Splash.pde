@@ -8,7 +8,7 @@ public class Splash {
 
     private final float shrinkSpeed = 0.975;
 
-    private boolean toRemove;
+    private boolean toDestroy;
     public Particle(float x, float y, float vx, float vy) {
       pos = new PVector(x, y);
       vel = new PVector(vx, vy);
@@ -19,7 +19,7 @@ public class Splash {
 
     public void update() {
       acc.add(PVector.mult(gravity, 8));
-      
+
       acc.mult(Time.getDeltaTime());
       vel.add(acc);
       acc.mult(0);
@@ -31,7 +31,7 @@ public class Splash {
       size *= shrinkSpeed;
       if (size <= 0.9) {
         size = 1;
-        toRemove = true;
+        toDestroy = true;
       }
     }
 
@@ -42,8 +42,8 @@ public class Splash {
       rect(pos.x, pos.y, size, size);
     }
 
-    public boolean toRemove() {
-      return toRemove;
+    public boolean toDestroy() {
+      return toDestroy;
     }
   }
 
@@ -53,14 +53,14 @@ public class Splash {
     float maxAngleOff = PI*0.1;
     int totalParticles = floor(random(16, 40));
     particles = new ArrayList<Particle>();
-    for(int i=0; i<totalParticles; i++){
+    for (int i=0; i<totalParticles; i++) {
       float px = x + random(-2, 2);
       float py = y + random(-2, 2);
-      
+
       PVector vel = PVector.fromAngle(angle + random(-maxAngleOff, maxAngleOff));
       vel.setMag(random(stength*0.5, stength));
       Particle particle = new Particle(px, py, vel.x, vel.y);
-      
+
       particles.add(particle);
     }
   }
@@ -74,7 +74,7 @@ public class Splash {
   public void update() {
     for (int i=particles.size()-1; i>=0; i--) {
       Particle particle = particles.get(i);
-      if (particle.toRemove()) {
+      if (particle.toDestroy()) {
         particles.remove(i);
         break;
       }

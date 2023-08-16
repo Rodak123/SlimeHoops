@@ -12,7 +12,9 @@ public class GameSprite implements IGameSprite {
   protected float angle;
 
   private float maxVelocity;
+
   private boolean frozen;
+  private boolean toDestroy;
 
   public GameSprite(PImage sprite, float x, float y) {
     this.sprite = sprite;
@@ -105,6 +107,14 @@ public class GameSprite implements IGameSprite {
 
   public final boolean isFrozen() {
     return frozen;
+  }
+
+  public final void destroy() {
+    toDestroy = true;
+  }
+
+  public final boolean toDestroy() {
+    return toDestroy;
   }
 
   public boolean colliding(IGameSprite other) {
