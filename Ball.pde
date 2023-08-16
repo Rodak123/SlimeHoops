@@ -2,13 +2,15 @@ public class Ball extends GameSprite {
 
   private final SplashManager splashManager;
   private final SoundManager soundManager;
+  private final CameraShaker cameraShaker;
 
   private boolean launched;
   private int wallBounces;
   private int orbHits;
 
-  public Ball(SpriteManager spriteManager, float x, float y, SplashManager splashManager, SoundManager soundManager) {
+  public Ball(SpriteManager spriteManager, float x, float y, SplashManager splashManager, SoundManager soundManager, CameraShaker cameraShaker) {
     super(spriteManager.ball, x, y);
+    this.cameraShaker = cameraShaker;
     this.splashManager = splashManager;
     this.soundManager = soundManager;
   }
@@ -44,10 +46,15 @@ public class Ball extends GameSprite {
     wallBounces++;
     if (vel.mag() > 50) {
       splashManager.splash(pos, vel);
-      if(vel.mag() > 25){
-        float amp = constrain(map(vel.mag(), 25, 200, 0, 1), 0, 1);
+      if(vel.mag() > 100){
+        float amp = constrain(map(vel.mag(), 100, 200, 0, 1), 0, 1);
         soundManager.bounce.amp(amp);
         soundManager.bounce.play();
+        
+        if(vel.mag() > 200){
+          float shakeStrength = constrain(map(vel.mag(), 200, 500, 0, 1), 0, 1);
+          cameraShaker.shake(shakeStrength);
+        }
       }
     }
   }
