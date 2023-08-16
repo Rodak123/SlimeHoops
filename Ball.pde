@@ -45,6 +45,8 @@ public class Ball extends GameSprite {
     if (vel.mag() > 50) {
       splashManager.splash(pos, vel);
       if(vel.mag() > 25){
+        float amp = constrain(map(vel.mag(), 25, 200, 0, 1), 0, 1);
+        soundManager.bounce.amp(amp);
         soundManager.bounce.play();
       }
     }
@@ -71,9 +73,8 @@ public class Ball extends GameSprite {
     if (launched) return;
     launched = true;
     PVector force = new PVector(spring.x, spring.y);
-    float maxMag = 1000;
-    float mag = constrain(map(spring.z, 0, (screenWidth+screenHeight)/2, 0, maxMag), 0, maxMag);
-    println(mag);
+    float maxMag = 1200;
+    float mag = constrain(map(spring.z, 0, screenWidth, 0, maxMag), 0, maxMag);
     force.setMag(mag);
     applyForce(force);
   }

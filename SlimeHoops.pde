@@ -11,7 +11,7 @@ private Hoop hoop;
 private Ball ball;
 private SpringDragger dragger;
 
-private int scale = 1;
+private int scale = 4;
 public int screenWidth = 144;
 public int screenHeight = 160;
 
@@ -46,6 +46,8 @@ public final void setup() {
 
   soundManager.theme.amp(0.5);
   soundManager.theme.loop();
+  
+  println("Hello fellow linux user!");
 }
 
 private final void spawnRound() {

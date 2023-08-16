@@ -12,7 +12,7 @@ public class SoundManager {
     success = new SoundFile(sketch, soundFolder + "success.wav");
     fail = new SoundFile(sketch, soundFolder + "fail.wav");
     bounce = new SoundFile(sketch, soundFolder + "bounce.wav");
-    splash = new SoundFile(sketch, soundFolder + "bounce.wav");
+    splash = new SoundFile(sketch, soundFolder + "orb.wav");
     theme = new SoundFile(sketch, soundFolder + "theme.wav");
   }
 }
